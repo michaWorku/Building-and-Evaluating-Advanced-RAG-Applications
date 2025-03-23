@@ -1,0 +1,12 @@
+openai
+llama-index
+trulens
+sentence-transformers
+transformers
+torch
+pandas
+numpy
+scipy
+matplotlib
+jupyter
+nest_asyncio

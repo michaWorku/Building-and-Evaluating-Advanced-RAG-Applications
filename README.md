@@ -18,14 +18,14 @@ This repository contains course notes and notebooks for **Building and Evaluatin
 
 ## 🏗 Course Content  
 
-### [**1️⃣ Advanced RAG Pipeline**]()  
+### [**1️⃣ Advanced RAG Pipeline**](https://github.com/michaWorku/Building-and-Evaluating-Advanced-RAG-Applications/blob/main/L1-Advanced_RAG_Pipeline.ipynb)  
 - **Basic RAG Setup**: Using **LlamaIndex** for standard retrieval.  
 - **Evaluation Benchmarking**: Setting up **TruEra & TruLens** for evaluation.  
 - **Advanced Retrieval Techniques**:  
   - **Sentence-window retrieval**: Incorporating nearby text for better retrieval.  
   - **Auto-merging retrieval**: Merging fragmented chunks into hierarchical structures.  
 
-### [**2️⃣ RAG Evaluation: The RAG Triad**]()  
+### [**2️⃣ RAG Evaluation: The RAG Triad**](https://github.com/michaWorku/Building-and-Evaluating-Advanced-RAG-Applications/blob/main/L2-RAG_Triad_of_metrics.ipynb)  
 The **RAG Triad** evaluates LLM-generated responses based on:  
 - **Answer Relevance**: Is the response relevant to the query?  
 - **Context Relevance**: Is the retrieved context accurate?  
@@ -39,14 +39,14 @@ The **RAG Triad** evaluates LLM-generated responses based on:
 5. **Re-evaluate and compare metrics** to measure improvements.  
 6. **Experiment** with different retrieval settings (e.g., window size, chunk structure).  
 
-### [**3️⃣ Sentence-Window Retrieval**]()  
+### [**3️⃣ Sentence-Window Retrieval**](https://github.com/michaWorku/Building-and-Evaluating-Advanced-RAG-Applications/blob/main/L3-Sentence_window_retrieval.ipynb)  
 - Improves **retrieval accuracy** by incorporating **context from surrounding sentences**.  
 - Uses **sentence windows** to balance **token cost vs. information depth**.  
 - Evaluation:  
   - Test with **different window sizes** (1, 3, 5).  
   - Assess impact on **Context Relevance & Groundedness**.  
 
-### [**4️⃣ Auto-Merging Retrieval**]()  
+### [**4️⃣ Auto-Merging Retrieval**](https://github.com/michaWorku/Building-and-Evaluating-Advanced-RAG-Applications/blob/main/L4-Auto-merging_Retrieval.ipynb)  
 - Structures retrieval with a **hierarchical chunking approach**.  
 - Merges **smaller chunks** when a threshold is reached, improving coherence.  
 - Evaluation:  
@@ -65,7 +65,7 @@ The **RAG Triad** evaluates LLM-generated responses based on:
 ## 🚀 Getting Started  
 1. **Clone the repository**  
    ```bash
-   git clone ()
+   git clone https://github.com/michaWorku/Building-and-Evaluating-Advanced-RAG-Applications.git
    cd your-repo-folder
    ```
 2. **Install dependencies**  

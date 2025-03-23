@@ -1,17 +1,8 @@
-#!pip install python-dotenv
-
-
 import os
 from dotenv import load_dotenv, find_dotenv
 
 import numpy as np
-from trulens_eval import (
-    Feedback,
-    TruLlama,
-    OpenAI
-)
 
-from trulens_eval.feedback import Groundedness
 import nest_asyncio
 
 nest_asyncio.apply()
@@ -22,52 +13,45 @@ def get_openai_api_key():
 
     return os.getenv("OPENAI_API_KEY")
 
-
-def get_hf_api_key():
-    _ = load_dotenv(find_dotenv())
-
-    return os.getenv("HUGGINGFACE_API_KEY")
-
-openai = OpenAI()
-
-qa_relevance = (
-    Feedback(openai.relevance_with_cot_reasons, name="Answer Relevance")
-    .on_input_output()
+from trulens_eval import (
+    Feedback,
+    TruLlama,
+    OpenAI
 )
 
-qs_relevance = (
-    Feedback(openai.relevance_with_cot_reasons, name = "Context Relevance")
-    .on_input()
-    .on(TruLlama.select_source_nodes().node.text)
-    .aggregate(np.mean)
-)
+from trulens_eval.feedback import Groundedness
 
-#grounded = Groundedness(groundedness_provider=openai, summarize_provider=openai)
-grounded = Groundedness(groundedness_provider=openai)
+def get_prebuilt_trulens_recorder(query_engine, app_id):
+    openai = OpenAI()
 
-groundedness = (
-    Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
+    qa_relevance = (
+        Feedback(openai.relevance_with_cot_reasons, name="Answer Relevance")
+        .on_input_output()
+    )
+
+    qs_relevance = (
+        Feedback(openai.relevance_with_cot_reasons, name = "Context Relevance")
+        .on_input()
         .on(TruLlama.select_source_nodes().node.text)
-        .on_output()
-        .aggregate(grounded.grounded_statements_aggregator)
-)
+        .aggregate(np.mean)
+    )
 
-feedbacks = [qa_relevance, qs_relevance, groundedness]
+#     grounded = Groundedness(groundedness_provider=openai, summarize_provider=openai)
+    grounded = Groundedness(groundedness_provider=openai)
 
-def get_trulens_recorder(query_engine, feedbacks, app_id):
+    groundedness = (
+        Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
+            .on(TruLlama.select_source_nodes().node.text)
+            .on_output()
+            .aggregate(grounded.grounded_statements_aggregator)
+    )
+
+    feedbacks = [qa_relevance, qs_relevance, groundedness]
     tru_recorder = TruLlama(
         query_engine,
         app_id=app_id,
         feedbacks=feedbacks
     )
-    return tru_recorder
-
-def get_prebuilt_trulens_recorder(query_engine, app_id):
-    tru_recorder = TruLlama(
-        query_engine,
-        app_id=app_id,
-        feedbacks=feedbacks
-        )
     return tru_recorder
 
 from llama_index import ServiceContext, VectorStoreIndex, StorageContext
@@ -79,11 +63,15 @@ import os
 
 
 def build_sentence_window_index(
-    document, llm, embed_model="local:BAAI/bge-small-en-v1.5", save_dir="sentence_index"
+    documents,
+    llm,
+    embed_model="local:BAAI/bge-small-en-v1.5",
+    sentence_window_size=3,
+    save_dir="sentence_index",
 ):
     # create the sentence window node parser w/ default settings
     node_parser = SentenceWindowNodeParser.from_defaults(
-        window_size=3,
+        window_size=sentence_window_size,
         window_metadata_key="window",
         original_text_metadata_key="original_text",
     )
@@ -94,7 +82,7 @@ def build_sentence_window_index(
     )
     if not os.path.exists(save_dir):
         sentence_index = VectorStoreIndex.from_documents(
-            [document], service_context=sentence_context
+            documents, service_context=sentence_context
         )
         sentence_index.storage_context.persist(persist_dir=save_dir)
     else:
@@ -166,7 +154,7 @@ def build_automerging_index(
 def get_automerging_query_engine(
     automerging_index,
     similarity_top_k=12,
-    rerank_top_n=2,
+    rerank_top_n=6,
 ):
     base_retriever = automerging_index.as_retriever(similarity_top_k=similarity_top_k)
     retriever = AutoMergingRetriever(
